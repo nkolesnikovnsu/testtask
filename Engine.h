@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class engine {
+class Engine {
 public:
 	double I = 0;
 	double overheatTemperature = 0;
@@ -15,16 +15,14 @@ public:
 	double C = 0;
 	vector<int> startM;
 	vector<int> startV;
-	double getVc(double ambientTemperature, double engineTemperature)
-	{
-		return C * (ambientTemperature - engineTemperature);
+	double getVc(double ambient_temperature, double engine_temp){
+		return C * (ambient_temperature - engine_temp);
 	}
-	double getVh()
-	{
+	double getVh(){
 		return M * Hm + V * V * Hv;
 	}
 	double M = 0;
 	double V = 0;
 };
-void input(engine& eng1, double nI, double noverT, double nHm, double nHv, double nC, vector<int> nstartM, vector<int> nstartV, double nM, double nV);
-int Stand(engine& eng1, double ambienttemp);
+void input(Engine& first_engine, double nI, double overheatingT, double nHm, double nHv, double nC, vector<int> nstartM, vector<int> nstartV, double nM, double nV);
+int Stand(Engine& first_engine, double ambient_temp);

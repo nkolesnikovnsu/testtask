@@ -2,53 +2,51 @@
 
 int main() {
 	setlocale(LC_ALL, "Rus");
-	engine eng1;
-	double ambienttemp = 0.0;
+	Engine first_engine;
+	double ambient_temp = 0.0;
 	cout << "Введите значение температуры окружающей среды" << endl;
-	cin >> ambienttemp;
-	input(eng1, 0.1, 110, 0.01, 0.0001, 0.1, { 20, 75, 100, 105, 75, 0 }, { 0, 75, 150, 200, 250, 300 }, 0, 0);
-	if (Stand(eng1, ambienttemp) == 1800) {
+	cin >> ambient_temp;
+	input(first_engine, 10, 110, 0.01, 0.0001, 0.1, { 20, 75, 100, 105, 75, 0 }, { 0, 75, 150, 200, 250, 300 }, 0, 0);
+	if (Stand(first_engine, ambient_temp) == 1800) {
 		cout << "Двигатель не перегрелся";
-	}
-	else {
-		cout << "Двигатель перегреется через "<< Stand(eng1, ambienttemp) << " сек";
+	} else {
+		cout << "Двигатель перегреется через "<< Stand(first_engine, ambient_temp) << " сек";
 	}
 	return 0;
 }
 
-void input(engine& eng1, double nI, double noverT, double nHm, double nHv, double nC, vector<int> nstartM, vector<int> nstartV, double nM, double nV) {
-	eng1.I = nI;
-	eng1.overheatTemperature = noverT;
-	eng1.Hm = nHm;
-	eng1.Hv = nHv;
-	eng1.C = nC;
-	eng1.startM = nstartM;
-	eng1.startV = nstartV;
-	eng1.M = nM;
-	eng1.V = nV;
+void input(Engine& first_engine, double nI, double overheatingT, double nHm, double nHv, double nC, vector<int> nstartM, vector<int> nstartV, double nM, double nV) {
+	first_engine.I = nI;
+	first_engine.overheatTemperature = overheatingT;
+	first_engine.Hm = nHm;
+	first_engine.Hv = nHv;
+	first_engine.C = nC;
+	first_engine.startM = nstartM;
+	first_engine.startV = nstartV;
+	first_engine.M = nM;
+	first_engine.V = nV;
 }
 
-int Stand(engine& eng1, double ambienttemp) {
+int Stand(Engine& first_engine, double ambient_temp) {
 	int ptime = 0;
 	int numberMV = 0;
-	eng1.M = eng1.startM[numberMV];
-	eng1.V = eng1.startV[numberMV];
-	double enginetemp = ambienttemp;
-	double a = eng1.M * eng1.I;
-	double eps = eng1.overheatTemperature - enginetemp;
-	while (eps > ABSOLUTE_ERROR && ptime < MAX_TIME)
-	{
+	first_engine.M = first_engine.startM[numberMV];
+	first_engine.V = first_engine.startV[numberMV];
+	double engine_temp = ambient_temp;
+	double a = first_engine.M / first_engine.I;
+	double eps = first_engine.overheatTemperature - engine_temp;
+	while (eps > ABSOLUTE_ERROR && ptime < MAX_TIME){
 		ptime++;
-		eng1.V += a;
-		if (numberMV < eng1.startM.size() - 2)
-			numberMV += eng1.V < eng1.startV[numberMV + 1] ? 0 : 1;
-		double up = (eng1.V - eng1.startV[numberMV]);
-		double down = (eng1.startV[numberMV + 1] - eng1.startV[numberMV]);
-		double factor = (eng1.startM[numberMV + 1] - eng1.startM[numberMV]);
-		eng1.M = up / down * factor + eng1.startM[numberMV];
-		enginetemp += eng1.getVc(ambienttemp, enginetemp) + eng1.getVh();
-		a = eng1.M * eng1.I;
-		eps = eng1.overheatTemperature - enginetemp;
+		first_engine.V += a;
+		if (numberMV < first_engine.startM.size() - 2)
+			numberMV += first_engine.V < first_engine.startV[numberMV + 1] ? 0 : 1;
+		double up = (first_engine.V - first_engine.startV[numberMV]);
+		double down = (first_engine.startV[numberMV + 1] - first_engine.startV[numberMV]);
+		double factor = (first_engine.startM[numberMV + 1] - first_engine.startM[numberMV]);
+		first_engine.M = up / down * factor + first_engine.startM[numberMV];
+		engine_temp += first_engine.getVc(ambient_temp, engine_temp) + first_engine.getVh();
+		a = first_engine.M / first_engine.I;
+		eps = first_engine.overheatTemperature - engine_temp;
 	}
 	return ptime;
 }
